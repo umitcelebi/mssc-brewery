@@ -1,15 +1,18 @@
 package com.umitclebi.msscbrewery.web.controller.v2;
 
-import com.umitclebi.msscbrewery.services.BeerService;
 import com.umitclebi.msscbrewery.services.v2.BeerServiceV2;
 import com.umitclebi.msscbrewery.web.model.BeerDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@Validated
 @RequestMapping("/api/v2/beer")
 @RestController
 public class BeerControllerV2 {
@@ -20,12 +23,12 @@ public class BeerControllerV2 {
     }
 
     @GetMapping({"/{beerId}"})
-    public ResponseEntity<BeerDto> getBear(@PathVariable UUID beerId){
+    public ResponseEntity<BeerDto> getBear(@NotNull @PathVariable UUID beerId){
         return new ResponseEntity<>(beerServiceV2.getBeerById(beerId), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<BeerDto> handlePost(@RequestBody BeerDto beerDto){
+    public ResponseEntity<BeerDto> handlePost(@Valid @NotNull @RequestBody BeerDto beerDto){
         BeerDto saveBeer=beerServiceV2.saveNewBeer(beerDto);
         HttpHeaders headers=new HttpHeaders();
         //todo add hostname to url
@@ -34,7 +37,7 @@ public class BeerControllerV2 {
     }
 
     @PutMapping({"/{beerId}"})
-    public ResponseEntity<BeerDto> handleUpdate(@PathVariable UUID beerId, @RequestBody BeerDto beerDto){
+    public ResponseEntity<BeerDto> handleUpdate(@PathVariable UUID beerId,@Valid @RequestBody BeerDto beerDto){
         beerServiceV2.updateBeer(beerId,beerDto);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
